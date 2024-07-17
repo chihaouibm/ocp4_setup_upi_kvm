@@ -15,6 +15,8 @@ cp "${CACHE_DIR}/CentOS-7-x86_64-GenericCloud.qcow2" "${VM_DIR}/${CLUSTER_NAME}-
 
 echo "====> Setting up Loadbalancer VM: "
 virt-customize -a "${VM_DIR}/${CLUSTER_NAME}-lb.qcow2" \
+    --run-command "sed -i s/mirror.centos.org/vault.centos.org/g /etc/yum.repos.d/*.repo" \
+    --run-command "sed -i s/^#.*baseurl=http/baseurl=http/g /etc/yum.repos.d/*.repo" \
     --uninstall cloud-init --ssh-inject root:file:${SSH_PUB_KEY_FILE} --selinux-relabel --install haproxy --install bind-utils \
     --copy-in install_dir/bootstrap.ign:/opt/ --copy-in install_dir/master.ign:/opt/ --copy-in install_dir/worker.ign:/opt/ \
     --copy-in "${CACHE_DIR}/${IMAGE}":/opt/ --copy-in tmpws.service:/etc/systemd/system/ \
