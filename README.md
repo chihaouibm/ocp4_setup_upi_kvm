@@ -1,5 +1,16 @@
 # Automated OpenShift 4 Cluster Installation on KVM
 
+### Fork Notice
+
+This is a fork of the [kxr/ocp4_setup_upi_kvm (17 July 2024)](https://github.com/kxr/ocp4_setup_upi_kvm), created because the original repository had two unresolved issues:
+
+1. **Make Network Type configurable:** Fixed in [Pull Request #37](https://github.com/kxr/ocp4_setup_upi_kvm/pull/37) by adding a `-t, --network-type` option. This allows configuring the network type, supporting the transition from OpenShift SDN CNI to OVN Kubernetes CNI due to the deprecation of OpenShift SDN CNI in OCP 4.14.
+2. **mirrorlist is not available for CentOS anymore:** Fixed following the instructions provided in [Issue #38](https://github.com/kxr/ocp4_setup_upi_kvm/issues/38).
+
+I would like to thank the original author Khizer Naeem (kxr) for their excellent work on this project. I am also grateful to the authors of the fixes for their valuable contributions.
+
+If the original maintainer decides to fix these problems, this fork may be considered obsolete.
+
 ### Prerequistes:
 
 - Internet connected physical host running a modern linux distribution
