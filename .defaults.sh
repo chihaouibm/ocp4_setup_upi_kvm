@@ -28,7 +28,7 @@ export MAS_MEM="16000"
 export WOR_CPU="2"
 
 # --worker-mem SIZE(MB)
-export WOR_MEM="8000"
+export WOR_MEM="16000"
 
 # --bootstrap-cpu N(vCPU)
 export BTS_CPU="4"
@@ -40,7 +40,7 @@ export BTS_MEM="16000"
 export LB_CPU="1"
 
 # --lb-mem SIZE(MB)
-export LB_MEM="1024"
+export LB_MEM="2048"
 
 # -n, --libvirt-network NETWORK
 export DEF_LIBVIRT_NET="default"
@@ -65,13 +65,13 @@ export VM_DIR="/var/lib/libvirt/images"
 
 # -s, --setup-dir DIR
 # By default set to /root/ocp4_cluster_$CLUSTER_NAME
-export SETUP_DIR=""
+export SETUP_DIR="/home/cpit/ocp4_cluster_ocp4"
 
 # -x, --cache-dir DIR
-export CACHE_DIR="/root/ocp4_downloads"
+export CACHE_DIR="/home/cpit/ocp4_downloads"
 
 # -p, --pull-secret FILE
-export PULL_SEC_F="/root/pull-secret"
+export PULL_SEC_F="/home/cpit/pull-secret"
 
 # --ssh-pub-key-file
 # By default a new ssh key pair is generated in $SETUP_DIR
