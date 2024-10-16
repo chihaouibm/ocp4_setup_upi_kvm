@@ -52,10 +52,10 @@ export VIR_NET_OCT=""
 export CLUSTER_NAME="ocp4"
 
 # -d, --cluster-domain DOMAIN
-export BASE_DOM="local"
+export BASE_DOM="chihaoui.site"
 
 # -t, --network-type TYPE
-export NETWORK_TYPE="OpenShiftSDN"
+export NETWORK_TYPE="OVNKubernetes"
 
 # -z, --dns-dir DIR
 export DNS_DIR="/etc/NetworkManager/dnsmasq.d"
