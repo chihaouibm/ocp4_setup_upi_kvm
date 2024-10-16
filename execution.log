@@ -1,0 +1,344 @@
+[cpit@CentOS-90-stream-amd64-base ocp4_setup_upi_kvm]$ sudo ./ocp4_setup_upi_kvm.sh --pull-secret /home/cpit/ocp4_setup_upi_kvm/pullsecret
+
+####################################
+### DEPENDENCIES & SANITY CHECKS ###
+####################################
+
+====> Checking if we have all the dependencies:  ok
+====> Checking if the script/working directory already exists:  ok
+====> Checking for pull-secret (/home/cpit/ocp4_setup_upi_kvm/pullsecret):  ok
+====> Checking if libvirt is running or enabled:  ok
+====> Checking if we have any existing leftover VMs:  ok
+====> Checking if DNS service (dnsmasq or NetworkManager) is active:  NetworkManager
+====> Checking if dnsmasq is enabled in NetworkManager:  ok
+====> Testing dnsmasq reload (systemctl reload NetworkManager):  ok
+====> Testing libvirtd restart (systemctl restart libvirtd):  ok
+====> Checking for any leftover dnsmasq config:  ok
+====> Checking for any leftover hosts file:  ok
+====> Checking for any leftover/conflicting dns records:  ok
+
+#######################
+### LIBVIRT NETWORK ###
+#######################
+
+====> Checking libvirt network:  using default
+
+##################
+#### DNS CHECK ###
+##################
+
+====> Checking if first entry in /etc/resolv.conf is pointing locally:  ok
+====> Creating a test host file for dnsmasq /etc/hosts.dnstest:  ok
+====> Creating a test dnsmasq config file /etc/NetworkManager/dnsmasq.d/dnstest.conf:  ok
+====> Reloading libvirt and dnsmasq: .. ok
+
+====> Testing forward dns via @127.0.0.1:  ok
+====> Testing reverse dns via @127.0.0.1:  ok
+====> Testing wildcard record via @127.0.0.1:  ok
+
+====> Testing forward dns via @192.168.122.1:  ok
+====> Testing reverse dns via @192.168.122.1:  ok
+====> Testing wildcard record via @192.168.122.1:  ok
+
+====> Testing forward dns via :  ok
+====> Testing reverse dns via :  ok
+====> Testing wildcard record via :  ok
+
+====> All DNS tests passed. Cleaning up: ... ok
+
+##########################################
+### OPENSHIFT/RHCOS VERSION/URL CHECK  ###
+##########################################
+
+====> Looking up OCP4 client for release stable:  openshift-client-linux-4.17.0.tar.gz
+====> Checking if Client URL is downloadable:  ok
+====> Looking up OCP4 installer for release stable:  openshift-install-linux-4.17.0.tar.gz
+====> Checking if Installer URL is downloadable:  ok
+====> Looking up RHCOS kernel for release 4.17/latest:  rhcos-4.17.0-x86_64-live-kernel-x86_64
+====> Checking if Kernel URL is downloadable:  ok
+====> Looking up RHCOS initramfs for release 4.17/latest:  rhcos-4.17.0-x86_64-live-initramfs.x86_64.img
+====> Checking if Initramfs URL is downloadable:  ok
+====> Looking up RHCOS image for release 4.17/latest:  rhcos-4.17.0-x86_64-live-rootfs.x86_64.img
+====> Checking if Image URL is downloadable:  ok
+====> Checking if Centos cloud image URL is downloadable:  ok
+
+
+      Red Hat OpenShift Version = 4.17.0
+
+        Red Hat CoreOS Version = 4.17.0
+
+
+Press [Enter] to continue, [Ctrl]+C to abort:
+
+#####################################################
+### DOWNLOAD AND PREPARE OPENSHIFT 4 INSTALLATION ###
+#####################################################
+
+====> Creating and using directory /home/cpit/ocp4_cluster_ocp4:  ok
+====> Creating a hosts file for this cluster (/etc/hosts.ocp4):  ok
+====> Creating a dnsmasq conf for this cluster (/etc/NetworkManager/dnsmasq.d/ocp4.conf):  ok
+====> SSH key to be injected in all VMs:  generated new ssh key
+====> Downloading OCP Client:
+--2024-10-16 13:34:59--  https://mirror.openshift.com/pub/openshift-v4/clients/ocp/stable/openshift-client-linux-4.17.0.tar.gz
+Resolving mirror.openshift.com (mirror.openshift.com)... 2600:9000:2156:7a00:17:3d36:19c0:93a1, 2600:9000:2156:9a00:17:3d36:19c0:93a1, 2600:9000:2156:7400:17:3d36:19c0:93a1, ...
+Connecting to mirror.openshift.com (mirror.openshift.com)|2600:9000:2156:7a00:17:3d36:19c0:93a1|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 69019910 (66M) [application/x-tar]
+Saving to: ‘/home/cpit/ocp4_downloads/openshift-client-linux-4.17.0.tar.gz.part’
+
+/home/cpit/ocp4_downloads/ope 100%[=================================================>]  65.82M  25.9MB/s    in 2.5s
+
+2024-10-16 13:35:03 (25.9 MB/s) - ‘/home/cpit/ocp4_downloads/openshift-client-linux-4.17.0.tar.gz.part’ saved [69019910/69019910]
+
+====> Downloading OCP Installer:
+--2024-10-16 13:35:03--  https://mirror.openshift.com/pub/openshift-v4/clients/ocp/stable/openshift-install-linux-4.17.0.tar.gz
+Resolving mirror.openshift.com (mirror.openshift.com)... 2600:9000:2156:6e00:17:3d36:19c0:93a1, 2600:9000:2156:7a00:17:3d36:19c0:93a1, 2600:9000:2156:9a00:17:3d36:19c0:93a1, ...
+Connecting to mirror.openshift.com (mirror.openshift.com)|2600:9000:2156:6e00:17:3d36:19c0:93a1|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 421984534 (402M) [application/x-tar]
+Saving to: ‘/home/cpit/ocp4_downloads/openshift-install-linux-4.17.0.tar.gz.part’
+
+/home/cpit/ocp4_downloads/ope 100%[=================================================>] 402.44M  37.6MB/s    in 12s
+
+2024-10-16 13:35:15 (34.4 MB/s) - ‘/home/cpit/ocp4_downloads/openshift-install-linux-4.17.0.tar.gz.part’ saved [421984534/421984534]
+
+====> Downloading RHCOS Image:
+--2024-10-16 13:35:19--  https://mirror.openshift.com/pub/openshift-v4/dependencies/rhcos/4.17/latest/rhcos-4.17.0-x86_64-live-rootfs.x86_64.img
+Resolving mirror.openshift.com (mirror.openshift.com)... 2600:9000:2156:b200:17:3d36:19c0:93a1, 2600:9000:2156:6e00:17:3d36:19c0:93a1, 2600:9000:2156:7a00:17:3d36:19c0:93a1, ...
+Connecting to mirror.openshift.com (mirror.openshift.com)|2600:9000:2156:b200:17:3d36:19c0:93a1|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 1117167104 (1.0G) [binary/octet-stream]
+Saving to: ‘/home/cpit/ocp4_downloads/rhcos-4.17.0-x86_64-live-rootfs.x86_64.img.part’
+
+/home/cpit/ocp4_downloads/rhc 100%[=================================================>]   1.04G  20.3MB/s    in 51s
+
+2024-10-16 13:36:10 (21.1 MB/s) - ‘/home/cpit/ocp4_downloads/rhcos-4.17.0-x86_64-live-rootfs.x86_64.img.part’ saved [1117167104/1117167104]
+
+====> Downloading RHCOS Kernel:
+--2024-10-16 13:36:10--  https://mirror.openshift.com/pub/openshift-v4/dependencies/rhcos/4.17/latest/rhcos-4.17.0-x86_64-live-kernel-x86_64
+Resolving mirror.openshift.com (mirror.openshift.com)... 2600:9000:2156:4c00:17:3d36:19c0:93a1, 2600:9000:2156:1000:17:3d36:19c0:93a1, 2600:9000:2156:3e00:17:3d36:19c0:93a1, ...
+Connecting to mirror.openshift.com (mirror.openshift.com)|2600:9000:2156:4c00:17:3d36:19c0:93a1|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 13613176 (13M) [binary/octet-stream]
+Saving to: ‘/home/cpit/ocp4_downloads/rhcos-4.17.0-x86_64-live-kernel-x86_64.part’
+
+/home/cpit/ocp4_downloads/rhc 100%[=================================================>]  12.98M  11.9MB/s    in 1.1s
+
+2024-10-16 13:36:12 (11.9 MB/s) - ‘/home/cpit/ocp4_downloads/rhcos-4.17.0-x86_64-live-kernel-x86_64.part’ saved [13613176/13613176]
+
+====> Downloading RHCOS Initramfs:
+--2024-10-16 13:36:12--  https://mirror.openshift.com/pub/openshift-v4/dependencies/rhcos/4.17/latest/rhcos-4.17.0-x86_64-live-initramfs.x86_64.img
+Resolving mirror.openshift.com (mirror.openshift.com)... 2600:9000:2156:d200:17:3d36:19c0:93a1, 2600:9000:2156:c200:17:3d36:19c0:93a1, 2600:9000:2156:be00:17:3d36:19c0:93a1, ...
+Connecting to mirror.openshift.com (mirror.openshift.com)|2600:9000:2156:d200:17:3d36:19c0:93a1|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 92181228 (88M) [binary/octet-stream]
+Saving to: ‘/home/cpit/ocp4_downloads/rhcos-4.17.0-x86_64-live-initramfs.x86_64.img.part’
+
+/home/cpit/ocp4_downloads/rhc 100%[=================================================>]  87.91M  22.2MB/s    in 4.5s
+
+2024-10-16 13:36:17 (19.5 MB/s) - ‘/home/cpit/ocp4_downloads/rhcos-4.17.0-x86_64-live-initramfs.x86_64.img.part’ saved [92181228/92181228]
+
+====> Creating ignition configs:
+WARNING Release Image Architecture not detected. Release Image Architecture is unknown
+INFO Consuming Install Config from target directory
+WARNING Making control-plane schedulable by setting MastersSchedulable to true for Scheduler cluster settings
+INFO Ignition-Configs created in: install_dir and install_dir/auth
+
+#################################
+### CREATING LOAD BALANCER VM ###
+#################################
+
+====> Downloading Centos 7 cloud image:
+--2024-10-16 13:36:21--  https://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud.qcow2
+Resolving cloud.centos.org (cloud.centos.org)... 2a05:d01c:c6a:cc01:16d6:f0af:63c3:8227, 18.170.68.63
+Connecting to cloud.centos.org (cloud.centos.org)|2a05:d01c:c6a:cc01:16d6:f0af:63c3:8227|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 902889472 (861M) [application/octet-stream]
+Saving to: ‘/home/cpit/ocp4_downloads/CentOS-7-x86_64-GenericCloud.qcow2.part’
+
+/home/cpit/ocp4_downloads/Cen 100%[=================================================>] 861.06M  65.7MB/s    in 12s
+
+2024-10-16 13:36:33 (74.7 MB/s) - ‘/home/cpit/ocp4_downloads/CentOS-7-x86_64-GenericCloud.qcow2.part’ saved [902889472/902889472]
+
+====> Copying Image for Loadbalancer VM:  ok
+====> Setting up Loadbalancer VM:
+[   0.0] Examining the guest ...
+[   7.7] Setting a random seed
+[   7.8] Running: sed -i s/mirror.centos.org/vault.centos.org/g /etc/yum.repos.d/*.repo
+[   7.8] Running: sed -i s/^#.*baseurl=http/baseurl=http/g /etc/yum.repos.d/*.repo
+[   7.8] Uninstalling packages: cloud-init
+[   9.6] SSH key inject: root
+[  10.4] Installing packages: haproxy
+[  16.9] Installing packages: bind-utils
+[  19.7] Copying: install_dir/bootstrap.ign to /opt/
+[  19.7] Copying: install_dir/master.ign to /opt/
+[  19.7] Copying: install_dir/worker.ign to /opt/
+[  19.7] Copying: /home/cpit/ocp4_downloads/rhcos-4.17.0-x86_64-live-rootfs.x86_64.img to /opt/
+[  23.6] Copying: tmpws.service to /etc/systemd/system/
+[  23.6] Copying: haproxy.cfg to /etc/haproxy/
+[  23.6] Running: systemctl daemon-reload
+[  23.6] Running: systemctl enable tmpws.service
+[  23.6] SELinux relabelling
+[  29.5] Finishing off
+====> Creating Loadbalancer VM: WARNING  --os-type is deprecated and does nothing. Please stop using it.
+ ok
+====> Starting Loadbalancer VM  ok
+====> Waiting for Loadbalancer VM to obtain IP address: 192.168.122.25
+====> Adding DHCP reservation for LB IP/MAC:  ok
+====> Adding LB hosts entry in /etc/hosts.ocp4:  ok
+====> Waiting for SSH access on LB VM:  ok
+
+############################################
+#### CREATE BOOTSTRAPING RHCOS/OCP NODES ###
+############################################
+
+====> Creating Boostrap VM: WARNING  --os-type is deprecated and does nothing. Please stop using it.
+ ok
+====> Creating Master-1 VM: WARNING  --os-type is deprecated and does nothing. Please stop using it.
+ ok
+====> Creating Master-2 VM: WARNING  --os-type is deprecated and does nothing. Please stop using it.
+ ok
+====> Creating Master-3 VM: WARNING  --os-type is deprecated and does nothing. Please stop using it.
+ ok
+====> Creating Worker-1 VM: WARNING  --os-type is deprecated and does nothing. Please stop using it.
+ ok
+====> Creating Worker-2 VM: WARNING  --os-type is deprecated and does nothing. Please stop using it.
+ ok
+====> Waiting for RHCOS Installation to finish:
+  --> VMs with pending installation: ocp4-bootstrap ocp4-master-1 ocp4-master-2 ocp4-master-3 ocp4-worker-1 ocp4-worker-2
+  --> VMs with pending installation: ocp4-bootstrap ocp4-master-1 ocp4-master-2 ocp4-master-3 ocp4-worker-1 ocp4-worker-2
+  --> VMs with pending installation: ocp4-bootstrap ocp4-master-1 ocp4-master-2 ocp4-master-3 ocp4-worker-1 ocp4-worker-2
+  --> VMs with pending installation: ocp4-master-1 ocp4-master-3 ocp4-worker-1 ocp4-worker-2
+====> Marking ocp4.chihaoui.site as local in dnsmasq:  ok
+====> Starting Bootstrap VM:  ok
+====> Starting Master-1 VM:  ok
+====> Starting Master-2 VM:  ok
+====> Starting Master-3 VM:  ok
+====> Starting Worker-1 VMs:  ok
+====> Starting Worker-2 VMs:  ok
+====> Waiting for Bootstrap to obtain IP address: 192.168.122.30
+  ==> Adding DHCP reservation:  ok
+  ==> Adding hosts entry in /etc/hosts.ocp4:  ok
+====> Waiting for Master-1 to obtain IP address: 192.168.122.143
+  ==> Adding DHCP reservation:  ok
+  ==> Adding hosts entry in /etc/hosts.ocp4:  ok
+  ==> Adding SRV record in dnsmasq:  ok
+====> Waiting for Master-2 to obtain IP address: 192.168.122.31
+  ==> Adding DHCP reservation:  ok
+  ==> Adding hosts entry in /etc/hosts.ocp4:  ok
+  ==> Adding SRV record in dnsmasq:  ok
+====> Waiting for Master-3 to obtain IP address: 192.168.122.214
+  ==> Adding DHCP reservation:  ok
+  ==> Adding hosts entry in /etc/hosts.ocp4:  ok
+  ==> Adding SRV record in dnsmasq:  ok
+====> Waiting for Worker-1 to obtain IP address: 192.168.122.175
+  ==> Adding DHCP reservation:  ok
+  ==> Adding hosts entry in /etc/hosts.ocp4:  ok
+====> Waiting for Worker-2 to obtain IP address: 192.168.122.55
+  ==> Adding DHCP reservation:  ok
+  ==> Adding hosts entry in /etc/hosts.ocp4:  ok
+====> Adding wild-card (*.apps) dns record in dnsmasq:  ok
+====> Resstarting libvirt and dnsmasq:  ok
+====> Configuring haproxy in LB VM: ..... ok
+====> Waiting for SSH access on Boostrap VM:  ok
+
+###############################
+#### OPENSHIFT BOOTSTRAPING ###
+###############################
+
+====> Waiting for Boostraping to finish:
+(Monitoring activity on bootstrap.ocp4.chihaoui.site)
+  --> Image Downloaded: quay.io/openshift-release-dev/ocp-release-55912702667e
+  --> Image Downloaded: quay.io/openshift-release-dev/ocp-v4.0-art-dev-99c11f2bcf62
+  --> Image Downloaded: quay.io/openshift-release-dev/ocp-v4.0-art-dev-5b4e8ebc3771
+  --> Phase Completed: api-bootstrap
+  --> Phase Completed: config-bootstrap
+  --> Phase Completed: cvo-bootstrap
+  --> Phase Completed: openshift-manifests
+  --> Image Downloaded: quay.io/openshift-release-dev/ocp-v4.0-art-dev-dd08df7416d1
+  --> Image Downloaded: quay.io/openshift-release-dev/ocp-v4.0-art-dev-2a254d597f0e
+  --> Image Downloaded: quay.io/openshift-release-dev/ocp-v4.0-art-dev-3e2541880f59
+  --> Image Downloaded: quay.io/openshift-release-dev/ocp-v4.0-art-dev-da94419b988b
+  --> Phase Completed: etcd-bootstrap
+  --> Container: 0 fa3e2c4e6df45 etcd
+  --> Container: 0 fa3e2c4e6df45 etcdctl
+  --> Image Downloaded: quay.io/openshift-release-dev/ocp-v4.0-art-dev-a8cb23da0718
+  --> Image Downloaded: quay.io/openshift-release-dev/ocp-v4.0-art-dev-edddd31ea3c1
+  --> Image Downloaded: quay.io/openshift-release-dev/ocp-v4.0-art-dev-c46e30c91c3e
+  --> Phase Completed: ingress-operator-bootstrap
+  --> Phase Completed: kube-apiserver-bootstrap
+  --> Phase Completed: kube-controller-manager-bootstrap
+  --> Phase Completed: kube-scheduler-bootstrap
+  --> Image Downloaded: quay.io/openshift-release-dev/ocp-v4.0-art-dev-566b9edd6681
+  --> Image Downloaded: quay.io/openshift-release-dev/ocp-v4.0-art-dev-5268d8658fed
+  --> Image Downloaded: quay.io/openshift-release-dev/ocp-v4.0-art-dev-0c24eb4013f2
+  --> Phase Completed: api-dns-resolved
+  --> Phase Completed: api-int-dns-resolved
+  --> Phase Completed: mco-bootstrap
+  --> Phase Completed: node-tuning-bootstrap
+  --> Container: 0 9ce79633d55c5 machine-config-server
+  --> Container: 0 9ce79633d55c5 machine-config-controller
+  --> Image Downloaded: quay.io/openshift-release-dev/ocp-v4.0-art-dev-2b2fcc890ee0
+  --> Phase Completed: cco-bootstrap
+  --> Container: 0 666576d5941ea cluster-version-operator
+  --> Container: 0 b3604c2234e40 cloud-credential-operator
+  ==> Kubernetes API is Up
+  --> Image Downloaded: quay.io/openshift-release-dev/ocp-v4.0-art-dev-f97ca0b6e98e
+  --> Image Downloaded: quay.io/openshift-release-dev/ocp-v4.0-art-dev-c5944f015921
+  --> Container: 1 1ec730c0e3cb9 kube-controller-manager
+  --> Container: 0 1ec730c0e3cb9 cluster-policy-controller
+  --> Container: 0 416e103e4320d kube-apiserver-insecure-readyz
+  --> Container: 0 416e103e4320d kube-apiserver
+  --> Container: 0 59553f63e89a1 kube-scheduler
+  --> Container: 0 416e103e4320d setup
+  --> Container: 0 1ec730c0e3cb9 kube-controller-manager
+  --> Container: 2 1ec730c0e3cb9 kube-controller-manager
+  --> Node master-1.ocp4.chihaoui.site NotReady
+  --> Node master-2.ocp4.chihaoui.site NotReady
+  --> Node master-3.ocp4.chihaoui.site NotReady
+  --> Node master-1.ocp4.chihaoui.site Ready
+  --> Node master-2.ocp4.chihaoui.site Ready
+  --> Node master-3.ocp4.chihaoui.site Ready
+  --> (bootkube.service is active, Kube API is Up)
+  --> (bootkube.service is active, Kube API is Up)
+  --> Phase Completed: cb-bootstrap
+  --> Phase Completed: cvo-overrides
+INFO Waiting up to 20m0s (until 2:09PM CEST) for the Kubernetes API at https://api.ocp4.chihaoui.site:6443...
+INFO API v1.30.4 up
+INFO Waiting up to 45m0s (until 2:34PM CEST) for bootstrapping to complete...
+INFO It is now safe to remove the bootstrap resources
+INFO Time elapsed: 1m46s
+====> Removing Boostrap VM:  ok
+====> Removing Bootstrap from haproxy:  ok
+
+#################################
+#### OPENSHIFT CLUSTERVERSION ###
+#################################
+
+====> Waiting for clusterversion:
+  --> Patching ingress controller to run router pods on master nodes: ingresscontroller.operator.openshift.io/default patched
+  --> Approving CSR: certificatesigningrequest.certificates.k8s.io/csr-jfj4f approved
+  --> Approving CSR: certificatesigningrequest.certificates.k8s.io/csr-x5rkt approved
+  --> Approving CSR: certificatesigningrequest.certificates.k8s.io/csr-gjr64 approved
+  --> Approving CSR: certificatesigningrequest.certificates.k8s.io/csr-kdp77 approved
+  --> Unable to apply 4.17.0: an unknown error has occurred: MultipleErrors
+  --> Patching image registry to use EmptyDir: config.imageregistry.operator.openshift.io/cluster patched
+  --> Unable to apply 4.17.0: some cluster operators are not available
+  --> Unable to apply 4.17.0: some cluster operators are not available
+  --> Unable to apply 4.17.0: the cluster operator authentication is not ava ...
+
+######################################################
+#### OPENSHIFT 4 INSTALLATION FINISHED SUCCESSFULLY###
+######################################################
+          time taken = 32 minutes
+
+INFO Waiting up to 40m0s (until 2:46PM CEST) for the cluster at https://api.ocp4.chihaoui.site:6443 to initialize...
+INFO Waiting up to 30m0s (until 2:36PM CEST) to ensure each cluster operator has finished progressing...
+INFO All cluster operators have completed progressing
+INFO Checking to see if there is a route at openshift-console/console...
+INFO Install complete!
+INFO To access the cluster as the system:admin user when using 'oc', run 'export KUBECONFIG=/home/cpit/ocp4_cluster_ocp4/install_dir/auth/kubeconfig'
+INFO Access the OpenShift web-console here: https://console-openshift-console.apps.ocp4.chihaoui.site
+INFO Login to the console with user: "kubeadmin", and password: "tgcGF-9Jq4n-W4GDQ-fkHsb"
+INFO Time elapsed: 24s
+[cpit@CentOS-90-stream-amd64-base ocp4_setup_upi_kvm]$

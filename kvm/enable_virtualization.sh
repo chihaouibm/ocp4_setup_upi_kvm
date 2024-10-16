@@ -14,7 +14,7 @@ else
     echo "Creating user 'cpit'..."
     useradd -m cpit
     echo "Setting password for user 'cpit'..."
-    echo "cpit:xxxxxxx" | chpasswd
+    echo "cpit:KameloTouati23;" | chpasswd
     echo "Adding 'cpit' to the wheel group for sudo access..."
     usermod -aG wheel cpit
 fi
@@ -45,6 +45,10 @@ lscpu | grep Virtualization || { echo "Virtualization not supported"; exit 1; }
 # Install essential virtualization packages
 echo "Installing virtualization packages..."
 dnf -y install qemu-kvm libvirt virt-install virt-viewer cockpit socat tar
+
+yum -y install /usr/bin/virt-customize
+
+yum -y install bind-utils
 
 # Enable and start the libvirtd service for virtualization
 echo "Enabling and starting libvirtd service..."
