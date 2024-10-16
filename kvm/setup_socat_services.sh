@@ -8,7 +8,7 @@ After=network.target
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/socat TCP-LISTEN:443,fork TCP:192.168.122.10:443
+ExecStart=/usr/bin/socat TCP-LISTEN:443,fork TCP:192.168.122.9:443
 Restart=on-failure
 
 [Install]
@@ -22,7 +22,7 @@ After=network.target
 
 [Service]
 Type=simple
-ExecStart=/usr/bin/socat TCP-LISTEN:6443,fork TCP:192.168.122.10:6443
+ExecStart=/usr/bin/socat TCP-LISTEN:6443,fork TCP:192.168.122.9:6443
 Restart=on-failure
 
 [Install]
