@@ -22,25 +22,33 @@ virt-install --name ${CLUSTER_NAME}-bootstrap \
 
 for i in $(seq 1 ${N_MAST})
 do
-echo -n "====> Creating Master-${i} VM: "
-virt-install --name ${CLUSTER_NAME}-master-${i} \
---disk "${VM_DIR}/${CLUSTER_NAME}-master-${i}.qcow2,size=50" --ram ${MAS_MEM} --cpu host --vcpus ${MAS_CPU} \
---os-type linux --os-variant rhel7.0 \
---network network=${VIR_NET},model=virtio --noreboot --noautoconsole \
---location rhcos-install/ \
---extra-args "nomodeset rd.neednet=1 coreos.inst=yes coreos.inst.install_dev=vda ${RHCOS_I_ARG}=http://${LBIP}:${WS_PORT}/${IMAGE} coreos.inst.ignition_url=http://${LBIP}:${WS_PORT}/master.ign" > /dev/null || err "Creating master-${i} vm failed "; ok
+    echo -n "====> Creating Master-${i} VM: "
+    virt-install --name ${CLUSTER_NAME}-master-${i} \
+    --disk "${VM_DIR}/${CLUSTER_NAME}-master-${i}.qcow2,size=100" \
+    --disk "${VM_DISK}/${CLUSTER_NAME}-master-${i}-DATA.qcow2,size=100" \ # Adding 100GB disk with DATA suffix
+    --ram ${MAS_MEM} --cpu host --vcpus ${MAS_CPU} \
+    --os-type linux --os-variant rhel7.0 \
+    --network network=${VIR_NET},model=virtio --noreboot --noautoconsole \
+    --location rhcos-install/ \
+    --extra-args "nomodeset rd.neednet=1 coreos.inst=yes coreos.inst.install_dev=vda ${RHCOS_I_ARG}=http://${LBIP}:${WS_PORT}/${IMAGE} coreos.inst.ignition_url=http://${LBIP}:${WS_PORT}/master.ign" > /dev/null || err "Creating master-${i} vm failed "
+    ok
 done
+
 
 for i in $(seq 1 ${N_WORK})
 do
-echo -n "====> Creating Worker-${i} VM: "
-  virt-install --name ${CLUSTER_NAME}-worker-${i} \
-  --disk "${VM_DIR}/${CLUSTER_NAME}-worker-${i}.qcow2,size=50" --ram ${WOR_MEM} --cpu host --vcpus ${WOR_CPU} \
-  --os-type linux --os-variant rhel7.0 \
-  --network network=${VIR_NET},model=virtio --noreboot --noautoconsole \
-  --location rhcos-install/ \
-  --extra-args "nomodeset rd.neednet=1 coreos.inst=yes coreos.inst.install_dev=vda ${RHCOS_I_ARG}=http://${LBIP}:${WS_PORT}/${IMAGE} coreos.inst.ignition_url=http://${LBIP}:${WS_PORT}/worker.ign" > /dev/null || err "Creating worker-${i} vm failed "; ok
+    echo -n "====> Creating Worker-${i} VM: "
+    virt-install --name ${CLUSTER_NAME}-worker-${i} \
+    --disk "${VM_DIR}/${CLUSTER_NAME}-worker-${i}.qcow2,size=100" \
+    --disk "${VM_DISK}/${CLUSTER_NAME}-worker-${i}-DATA.qcow2,size=100" \ # Adding 100GB disk with DATA suffix
+    --ram ${WOR_MEM} --cpu host --vcpus ${WOR_CPU} \
+    --os-type linux --os-variant rhel7.0 \
+    --network network=${VIR_NET},model=virtio --noreboot --noautoconsole \
+    --location rhcos-install/ \
+    --extra-args "nomodeset rd.neednet=1 coreos.inst=yes coreos.inst.install_dev=vda ${RHCOS_I_ARG}=http://${LBIP}:${WS_PORT}/${IMAGE} coreos.inst.ignition_url=http://${LBIP}:${WS_PORT}/worker.ign" > /dev/null || err "Creating worker-${i} vm failed "
+    ok
 done
+
 
 echo "====> Waiting for RHCOS Installation to finish: "
 while rvms=$(virsh list --name | grep "${CLUSTER_NAME}-master-\|${CLUSTER_NAME}-worker-\|${CLUSTER_NAME}-bootstrap" 2> /dev/null); do

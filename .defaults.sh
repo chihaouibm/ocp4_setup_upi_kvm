@@ -63,6 +63,9 @@ export DNS_DIR="/etc/NetworkManager/dnsmasq.d"
 # -v, --vm-dir DIR
 export VM_DIR="/var/lib/libvirt/images"
 
+# -v, --vm-dir DIR
+export VM_DISK="/vmdisk"
+
 # -s, --setup-dir DIR
 # By default set to /root/ocp4_cluster_$CLUSTER_NAME
 export SETUP_DIR="/home/cpit/ocp4_cluster_ocp4"
